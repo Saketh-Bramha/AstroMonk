@@ -1,0 +1,11 @@
+# AstroMonk AI Guide
+
+AstroMonk is a Dual-Engine Cosmic Intelligence application powered by advanced Vedic Astrological mathematics and state-of-the-art Large Language Models (Gemini & Groq).
+
+## Services
+- [Daily Horoscope](https://astro-monk.vercel.app/feature/daily)
+- [Birth Chart / Kundli](https://astro-monk.vercel.app/feature/chart)
+- [Ask the Cosmic Oracle](https://astro-monk.vercel.app/feature/ask)
+
+## Technology
+Built with React, Vite, Tailwind CSS, Python, Flask, and JyotishGanit.
