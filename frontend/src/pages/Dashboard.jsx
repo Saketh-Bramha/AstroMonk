@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { Sun, Moon, Calendar, Map, MessageCircle, LogOut } from 'lucide-react';
 
 const features = [
-  { id: 'daily', title: 'Daily Horoscope', icon: Sun, color: 'text-yellow-400', desc: 'Cosmic guidance for today based on your Moon sign.' },
-  { id: 'weekly', title: 'Weekly Forecast', icon: Calendar, color: 'text-blue-400', desc: 'A deeper look into the week ahead.' },
-  { id: 'chart', title: 'Birth Chart (Kundli)', icon: Map, color: 'text-purple-400', desc: 'Generate your exact South Indian Vedic chart.' },
-  { id: 'ask', title: 'Ask the Oracle', icon: MessageCircle, color: 'text-emerald-400', desc: 'Ask specific questions to the cosmic AI.' },
+  { id: 'daily', path: '/feature/daily', title: 'Daily Horoscope', icon: Sun, color: 'text-yellow-400', desc: 'Cosmic guidance for today based on your Moon sign.' },
+  { id: 'forecast', path: '/forecast', title: 'Cosmic Forecast', icon: Calendar, color: 'text-blue-400', desc: 'A deeper look into your week, month, or year.' },
+  { id: 'chart', path: '/feature/chart', title: 'Birth Chart (Kundli)', icon: Map, color: 'text-purple-400', desc: 'Generate your exact South Indian Vedic chart.' },
+  { id: 'ask', path: '/feature/ask', title: 'Ask the Oracle', icon: MessageCircle, color: 'text-emerald-400', desc: 'Ask specific questions to the cosmic AI.' },
 ];
 
 export default function Dashboard() {
@@ -47,7 +47,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              onClick={() => navigate(`/feature/${f.id}`)}
+              onClick={() => navigate(f.path)}
               className="glass-panel p-6 cursor-pointer hover:border-cosmic-gold/50 transition-all hover:shadow-[0_0_20px_rgba(234,179,8,0.1)] group"
             >
               <div className="flex items-start space-x-4">
