@@ -13,7 +13,6 @@ __pycache__/
 *$py.class
 
 # Data files generated locally
-hip_main.dat
 *.svg
 
 # IDEs
