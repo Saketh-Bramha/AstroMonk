@@ -47,8 +47,8 @@ export default function Login() {
           onClick={handleLogin}
           className="w-full flex items-center justify-center space-x-3 bg-white text-gray-900 py-3 px-4 rounded-xl font-medium hover:bg-gray-100 transition-colors"
         >
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
-          <span>Sign in with Google</span>
+          <Sun className="w-5 h-5 text-gray-900" />
+          <span>Enter the Cosmos</span>
         </button>
       </motion.div>
     </div>

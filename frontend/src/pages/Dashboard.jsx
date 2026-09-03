@@ -27,7 +27,7 @@ export default function Dashboard() {
           </h1>
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-purple-200/80 text-sm hidden md:block">Welcome, {user.displayName}</span>
+          <span className="text-purple-200/80 text-sm hidden md:block">Welcome, {birthDetails?.name || user?.displayName}</span>
           <button onClick={() => { logout(); navigate('/login'); }} className="p-2 hover:bg-white/10 rounded-full transition text-purple-200">
             <LogOut className="w-5 h-5" />
           </button>
