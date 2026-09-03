@@ -82,7 +82,7 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
     """
     
     # Using REST API
-    models_to_try = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-flash-latest"]
+    models_to_try = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-flash-latest"]
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
     
