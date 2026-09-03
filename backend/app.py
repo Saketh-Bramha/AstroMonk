@@ -110,7 +110,7 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
                 "Content-Type": "application/json"
             }
             groq_payload = {
-                "model": "openai/gpt-oss-20b",
+                "model": "qwen/qwen3.8-27b",
                 "messages": [{"role": "user", "content": prompt}]
             }
             response = requests.post(url, headers=groq_headers, json=groq_payload, timeout=15)
