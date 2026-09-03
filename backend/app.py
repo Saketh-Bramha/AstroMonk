@@ -1,11 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
+import io
+import requests
+import concurrent.futures
 from dotenv import load_dotenv
 from datetime import datetime
 from geopy.geocoders import Nominatim
-import requests
-import json
 import jyotichart as jc
 from jyotishganit import calculate_birth_chart
 
@@ -100,42 +101,69 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
     3. Keep it well-formatted with HTML bold tags (e.g. <b>text</b>) and <br> tags for spacing. Do not use markdown (**, ##).
     """
     
-    # Using REST API
-    models_to_try = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-flash-latest"]
-    headers = {'Content-Type': 'application/json'}
-    payload = {"contents": [{"parts": [{"text": prompt}]}]}
-    
-    for model in models_to_try:
+    def fetch_gemini(p):
+        if not os.getenv("GEMINI_API_KEY"): return None
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={os.getenv('GEMINI_API_KEY')}"
-            response = requests.post(url, headers=headers, json=payload, timeout=15)
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={os.getenv('GEMINI_API_KEY')}"
+            headers = {'Content-Type': 'application/json'}
+            payload = {"contents": [{"parts": [{"text": p}]}]}
+            response = requests.post(url, headers=headers, json=payload, timeout=25)
             if response.status_code == 200:
-                data = response.json()
-                text = data['candidates'][0]['content']['parts'][0]['text']
-                return text.replace("\n", "<br>")
+                return response.json()['candidates'][0]['content']['parts'][0]['text']
         except Exception:
-            continue
-            
-    # Fallback to Groq if Google is down
-    if os.getenv("GROQ_API_KEY"):
+            pass
+        return None
+
+    def fetch_groq(p):
+        if not os.getenv("GROQ_API_KEY"): return None
         try:
             url = "https://api.groq.com/openai/v1/chat/completions"
-            groq_headers = {
+            headers = {
                 "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
                 "Content-Type": "application/json"
             }
-            groq_payload = {
+            payload = {
                 "model": "qwen/qwen3.8-27b",
-                "messages": [{"role": "user", "content": prompt}]
+                "messages": [{"role": "user", "content": p}]
             }
-            response = requests.post(url, headers=groq_headers, json=groq_payload, timeout=15)
+            response = requests.post(url, headers=headers, json=payload, timeout=25)
             if response.status_code == 200:
-                data = response.json()
-                return data['choices'][0]['message']['content'].replace("\n", "<br>")
+                return response.json()['choices'][0]['message']['content']
         except Exception:
             pass
+        return None
 
-    return "Error generating analysis from Gemini. Google servers are currently at maximum capacity."
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_gemini = executor.submit(fetch_gemini, prompt)
+        future_groq = executor.submit(fetch_groq, prompt)
+        
+        gemini_result = future_gemini.result()
+        groq_result = future_groq.result()
+        
+    if gemini_result and groq_result:
+        consensus_prompt = f"""
+        You are the Supreme Cosmic Synthesizer. Two master astrologers have provided readings based on exact planetary placements.
+        
+        Reading 1 (Gemini):
+        {gemini_result}
+        
+        Reading 2 (Groq):
+        {groq_result}
+        
+        Synthesize these two advanced readings into ONE ultimate, highly elite, and deeply insightful Master Reading. 
+        Format beautifully with HTML tags like <b> and <br> for spacing. Do not use markdown like **.
+        """
+        final_result = fetch_groq(consensus_prompt)
+        if final_result:
+            return "<div class='text-xs text-cosmic-gold mb-6 uppercase tracking-widest border-b border-cosmic-gold/30 pb-2 inline-block'>⚡ Dual-Engine Synthesis (Gemini + Groq)</div><br><br>" + final_result.replace('\n', '<br>')
+            
+    # Fallbacks
+    if groq_result:
+        return "<div class='text-xs text-blue-400 mb-6 uppercase tracking-widest border-b border-blue-400/30 pb-2 inline-block'>🔮 Oracle Engine: Groq (Qwen)</div><br><br>" + groq_result.replace('\n', '<br>')
+    elif gemini_result:
+        return "<div class='text-xs text-purple-400 mb-6 uppercase tracking-widest border-b border-purple-400/30 pb-2 inline-block'>🔮 Oracle Engine: Gemini</div><br><br>" + gemini_result.replace('\n', '<br>')
+        
+    return "Error generating analysis from the Cosmic Oracles. Both servers are currently experiencing high dimensional interference."
 
 def draw_south_chart(name: str, lagna_sign: str, planets_map: dict):
     south_chart = jc.SouthChart("D1 Natal Chart", name, IsFullChart=False)
