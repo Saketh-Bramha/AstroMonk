@@ -120,7 +120,7 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
             response = requests.post(url, headers=groq_headers, json=groq_payload, timeout=15)
             if response.status_code == 200:
                 data = response.json()
-                return "[Gemini 503 Fallback Mode] " + data['choices'][0]['message']['content'].replace("\n", "<br>")
+                return data['choices'][0]['message']['content'].replace("\n", "<br>")
         except Exception:
             pass
 
