@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cosmic-900 text-white min-h-screen font-sans;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(42, 31, 82, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(169, 88, 255, 0.15) 0%, transparent 50%);
+  }
+}
+
+.glass-panel {
+  @apply bg-cosmic-800/60 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl;
+}
+
+.input-field {
+  @apply w-full bg-cosmic-900/50 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-cosmic-accent focus:ring-1 focus:ring-cosmic-accent transition-all duration-300;
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-cosmic-700 to-cosmic-accent hover:from-cosmic-accent hover:to-purple-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-purple-500/30 transform hover:-translate-y-0.5 transition-all duration-300;
+}
+
+.btn-secondary {
+  @apply bg-transparent border-2 border-cosmic-gold text-cosmic-gold hover:bg-cosmic-gold hover:text-cosmic-900 font-bold py-3 px-6 rounded-lg shadow-lg shadow-cosmic-gold/20 transform hover:-translate-y-0.5 transition-all duration-300;
+}
+
+/* Beautiful HTML Content Styling */
+.reading-content h3 {
+  @apply text-xl font-bold text-cosmic-gold mb-3 mt-4;
+}
+.reading-content p {
+  @apply text-gray-300 leading-relaxed mb-4;
+}
+.reading-content strong {
+  @apply text-white font-semibold;
+}
+.reading-content ul {
+  @apply list-disc list-inside text-gray-300 mb-4 space-y-2;
+}
+.reading-content li {
+  @apply leading-relaxed;
+}
