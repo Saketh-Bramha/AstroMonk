@@ -59,26 +59,21 @@ def compute_astrology_data(dob: datetime, place: str):
         "planets_map": planets_sign_map
     }
 
-def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = ""):
+def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = "", dob: datetime = None, place: str = ""):
     prompt = f"""
-    You are an expert Vedic astrologer. 
-    Analyze this birth chart focusing EXPLICITLY on the Moon Sign (Janma Rashi).
-    
-    Person Details:
-    - Name: {name}
+    You are an expert Vedic astrologer. I am providing you with the following exact astronomical birth chart details of {name}.
+    - Ascendant (Lagna): {lagna}
     - Moon Sign (Janma Rashi): {moon_sign}
-    - Birth Star (Nakshatra): {nakshatra}
-    - Lagna (Ascendant): {lagna}
-    """
-    if question:
-        prompt += f"\n    They asked this specific question: {question}\n    Answer their question incorporating these cosmic alignments.\n"
-
-    prompt += """
+    - Moon Nakshatra: {nakshatra}
+    - Date of Birth: {dob.strftime('%Y-%m-%d') if dob else "N/A"}
+    - Place of Birth: {place}
+    - Seeker's Question: {question if question else "General life guidance and cosmic path."}
+    
     Please provide:
-    1. Core personality & emotional nature governed by the Rashi.
-    2. Career & leadership traits.
-    3. Current cosmic strengths and practical remedies based on the Moon Sign.
-    Keep the tone insightful, structured, and use HTML tags (like <strong>, <h3>, <br>) so it renders beautifully. Do not use markdown like **.
+    1. A profound, mystical, yet highly accurate analysis of their personality and destiny based on their Lagna, Moon Sign, and Nakshatra.
+    2. Answering their specific question using astrological insights.
+    3. A specific 'Daily Horoscope' for today ({datetime.now().strftime('%Y-%m-%d')}) based on their Moon Sign ({moon_sign}).
+    4. Keep it well-formatted with HTML bold tags (e.g. <b>text</b>) and <br> tags for spacing. Do not use markdown (**, ##).
     """
     
     # Using REST API
@@ -164,7 +159,7 @@ def predict():
         astro = compute_astrology_data(dob, place)
         
         analysis = generate_moon_analysis(
-            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], question
+            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], question, dob, place
         )
 
         return jsonify({
