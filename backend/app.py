@@ -61,11 +61,13 @@ def compute_astrology_data(dob: datetime, place: str):
 
 def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = "", dob: datetime = None, place: str = "", req_type: str = "daily"):
     
+    current_date = datetime.now().strftime('%A, %B %d, %Y')
+
     type_prompts = {
-        "daily": f"A specific 'Daily Horoscope' for today ({datetime.now().strftime('%Y-%m-%d')}) based on their Moon Sign ({moon_sign}).",
-        "weekly": f"A detailed 'Weekly Forecast' for the upcoming week based on their Moon Sign ({moon_sign}). Focus on career, love, and health.",
-        "monthly": f"A comprehensive 'Monthly Forecast' for the current month based on their Moon Sign ({moon_sign}).",
-        "yearly": f"A broad 'Yearly Destiny Forecast' for the rest of the year based on their Moon Sign ({moon_sign}).",
+        "daily": f"Write a specific 'Daily Horoscope' for TODAY'S DATE ({current_date}). Do not write it for their birth date. Base it on their Moon Sign ({moon_sign}).",
+        "weekly": f"Write a detailed 'Weekly Forecast' for the upcoming week starting TODAY ({current_date}). Focus on career, love, and health based on their Moon Sign ({moon_sign}).",
+        "monthly": f"Write a comprehensive 'Monthly Forecast' for the current month based on their Moon Sign ({moon_sign}).",
+        "yearly": f"Write a broad 'Yearly Destiny Forecast' for the next 12 months starting from TODAY ({current_date}) based on their Moon Sign ({moon_sign}).",
         "ask": f"Answering their specific question: '{question}' using astrological insights."
     }
     
@@ -79,6 +81,8 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
     - Date of Birth: {dob.strftime('%Y-%m-%d') if dob else "N/A"}
     - Place of Birth: {place}
     
+    CRITICAL INSTRUCTION: Today's date is {current_date}. When writing horoscopes or forecasts, you MUST write them for {current_date}, not the user's Date of Birth.
+
     Please provide:
     1. A profound, mystical, yet highly accurate analysis of their personality and destiny based on their Lagna, Moon Sign, and Nakshatra.
     2. {specific_request}
