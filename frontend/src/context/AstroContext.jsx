@@ -8,21 +8,34 @@ export function useAstro() {
 }
 
 export function AstroProvider({ children }) {
-  const [user, setUser] = useState(null); // Will hold Google User
-  const [birthDetails, setBirthDetails] = useState(null);
+  // Load initial state from localStorage if it exists
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('astro_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  }); 
+
+  const [birthDetails, setBirthDetails] = useState(() => {
+    const savedDetails = localStorage.getItem('astro_details');
+    return savedDetails ? JSON.parse(savedDetails) : null;
+  });
   
   // Dummy login for now until Firebase is setup
   const login = () => {
-    setUser({ displayName: "Seeker", email: "seeker@cosmos.com" });
+    const mockUser = { displayName: "Seeker", email: "seeker@cosmos.com" };
+    setUser(mockUser);
+    localStorage.setItem('astro_user', JSON.stringify(mockUser));
   };
 
   const logout = () => {
     setUser(null);
     setBirthDetails(null);
+    localStorage.removeItem('astro_user');
+    localStorage.removeItem('astro_details');
   };
 
   const saveDetails = (details) => {
     setBirthDetails(details);
+    localStorage.setItem('astro_details', JSON.stringify(details));
   };
 
   return (

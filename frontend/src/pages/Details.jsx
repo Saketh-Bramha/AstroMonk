@@ -5,14 +5,14 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Details() {
-  const { saveDetails, user } = useAstro();
+  const { saveDetails, user, birthDetails } = useAstro();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
-    name: user?.displayName || '',
-    dob: '',
-    time: '',
-    place: ''
+    name: birthDetails?.name || user?.displayName || '',
+    dob: birthDetails?.dob || '',
+    time: birthDetails?.time || '',
+    place: birthDetails?.place || ''
   });
 
   const handleChange = (e) => {

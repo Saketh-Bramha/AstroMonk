@@ -1,11 +1,20 @@
+import { useEffect } from 'react';
 import { useAstro } from '../context/AstroContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Moon, Sun } from 'lucide-react';
 
 export default function Login() {
-  const { login } = useAstro();
+  const { login, user, birthDetails } = useAstro();
   const navigate = useNavigate();
+
+  // If already logged in, redirect immediately!
+  useEffect(() => {
+    if (user) {
+      if (birthDetails) navigate('/dashboard');
+      else navigate('/details');
+    }
+  }, [user, birthDetails, navigate]);
 
   const handleLogin = () => {
     login(); // Mock login for now
