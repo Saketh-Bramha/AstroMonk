@@ -44,11 +44,13 @@ def compute_astrology_data(dob: datetime, place: str):
     ]
     
     planets_sign_map = {}
+    planets_dict = {}
     for p in chart.d1_chart.planets:
         try:
             sign_index = zodiac_order.index(p.sign) + 1
             planet_name = p.celestial_body.capitalize()
             planets_sign_map[planet_name] = sign_index
+            planets_dict[planet_name] = p.sign
         except Exception:
             pass
             
@@ -56,19 +58,23 @@ def compute_astrology_data(dob: datetime, place: str):
         "moon_sign": moon.sign,
         "nakshatra": nakshatra,
         "lagna": ascendant,
-        "planets_map": planets_sign_map
+        "planets_map": planets_sign_map,
+        "planets_dict": planets_dict
     }
 
-def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = "", dob: datetime = None, place: str = "", req_type: str = "daily"):
+def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, planets_dict: dict, question: str = "", dob: datetime = None, place: str = "", req_type: str = "daily"):
     
     current_date = datetime.now().strftime('%A, %B %d, %Y')
+    
+    # Format the planetary positions into a readable string
+    planets_str = "\n".join([f"    - {planet}: {sign}" for planet, sign in planets_dict.items()])
 
     type_prompts = {
-        "daily": f"Write a specific 'Daily Horoscope' for TODAY'S DATE ({current_date}). Do not write it for their birth date. Base it on their Moon Sign ({moon_sign}).",
-        "weekly": f"Write a detailed 'Weekly Forecast' for the upcoming week starting TODAY ({current_date}). Focus on career, love, and health based on their Moon Sign ({moon_sign}).",
-        "monthly": f"Write a comprehensive 'Monthly Forecast' for the current month based on their Moon Sign ({moon_sign}).",
-        "yearly": f"Write a broad 'Yearly Destiny Forecast' for the next 12 months starting from TODAY ({current_date}) based on their Moon Sign ({moon_sign}).",
-        "ask": f"Answering their specific question: '{question}' using astrological insights."
+        "daily": f"Write a specific 'Daily Horoscope' for TODAY'S DATE ({current_date}). Do not write it for their birth date. Base it on their Moon Sign ({moon_sign}) and planetary transits/placements.",
+        "weekly": f"Write a detailed 'Weekly Forecast' for the upcoming week starting TODAY ({current_date}). Focus on career, love, and health based on their planetary placements.",
+        "monthly": f"Write a comprehensive 'Monthly Forecast' for the current month based on their full chart.",
+        "yearly": f"Write a broad 'Yearly Destiny Forecast' for the next 12 months starting from TODAY ({current_date}) based on their full chart.",
+        "ask": f"Answering their specific question: '{question}' using deep astrological insights from their complete chart."
     }
     
     specific_request = type_prompts.get(req_type, type_prompts["daily"])
@@ -78,13 +84,18 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
     - Ascendant (Lagna): {lagna}
     - Moon Sign (Janma Rashi): {moon_sign}
     - Moon Nakshatra: {nakshatra}
+    
+    Full Planetary Placements (D1 Chart):
+{planets_str}
+
     - Date of Birth: {dob.strftime('%Y-%m-%d') if dob else "N/A"}
     - Place of Birth: {place}
     
     CRITICAL INSTRUCTION: Today's date is {current_date}. When writing horoscopes or forecasts, you MUST write them for {current_date}, not the user's Date of Birth.
+    Do not just give a basic reading. Analyze conjunctions (e.g. Moon+Ketu), exaltations (e.g. Exalted Mars/Venus), and debilitations to give a deep, elite, and highly personalized reading.
 
     Please provide:
-    1. A profound, mystical, yet highly accurate analysis of their personality and destiny based on their Lagna, Moon Sign, and Nakshatra.
+    1. A profound, mystical, and highly advanced analysis of their personality and destiny based on their full chart placements.
     2. {specific_request}
     3. Keep it well-formatted with HTML bold tags (e.g. <b>text</b>) and <br> tags for spacing. Do not use markdown (**, ##).
     """
@@ -173,7 +184,7 @@ def predict():
         astro = compute_astrology_data(dob, place)
         
         analysis = generate_moon_analysis(
-            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], question, dob, place, req_type
+            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], astro["planets_dict"], question, dob, place, req_type
         )
 
         return jsonify({
