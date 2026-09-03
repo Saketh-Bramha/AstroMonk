@@ -29,11 +29,14 @@ function App() {
     setChartResult(null);
 
     try {
-      const response = await fetch('https://127.0.0.1:5000/predict', {
+      const response = await fetch('https://astromonk-api.onrender.com/predict', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+
       const data = await response.json();
       if (data.status === 'success') {
         setPredictResult(data);
@@ -41,28 +44,26 @@ function App() {
         setError(data.message);
       }
     } catch (err) {
-      setError(`Connection failed. Please ensure you've accepted the adhoc SSL certificate on the backend at https://127.0.0.1:5000`);
+      setError(`Connection failed. Please ensure the backend is running.`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGenerateChart = async () => {
+  const handleGenerateChart = async (e) => {
+    e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError('');
     setChartResult(null);
     setPredictResult(null);
 
     try {
-      const response = await fetch('https://127.0.0.1:5000/generate_chart', {
+      const response = await fetch('https://astromonk-api.onrender.com/generate_chart', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          dob: formData.dob,
-          time: formData.time,
-          place: formData.place
-        })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
       const data = await response.json();
       if (data.status === 'success') {
@@ -71,7 +72,7 @@ function App() {
         setError(data.message);
       }
     } catch (err) {
-      setError(`Connection failed. Please ensure you've accepted the adhoc SSL certificate on the backend at https://127.0.0.1:5000`);
+      setError(`Connection failed. Please ensure the backend is running.`);
     } finally {
       setLoading(false);
     }
@@ -110,13 +111,6 @@ function App() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="lg:col-span-4 glass-panel p-8"
         >
-          <div className="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-200/90 text-sm flex items-start space-x-3">
-            <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-orange-400" />
-            <p>
-              Since the backend uses a secure adhoc SSL certificate, you must first <a href="https://127.0.0.1:5000" target="_blank" rel="noreferrer" className="text-cosmic-gold underline hover:text-white transition-colors">visit the backend</a> and click "Proceed to 127.0.0.1" before consulting the cosmos.
-            </p>
-          </div>
-
           <form onSubmit={handlePredict} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-purple-200/80 mb-1 ml-1">Seeker's Name</label>
