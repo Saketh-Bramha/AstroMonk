@@ -96,7 +96,27 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
                 return text.replace("\n", "<br>")
         except Exception:
             continue
-    return "Error generating analysis from Gemini."
+            
+    # Fallback to Groq if Google is down
+    if os.getenv("GROQ_API_KEY"):
+        try:
+            url = "https://api.groq.com/openai/v1/chat/completions"
+            groq_headers = {
+                "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+                "Content-Type": "application/json"
+            }
+            groq_payload = {
+                "model": "openai/gpt-oss-20b",
+                "messages": [{"role": "user", "content": prompt}]
+            }
+            response = requests.post(url, headers=groq_headers, json=groq_payload, timeout=15)
+            if response.status_code == 200:
+                data = response.json()
+                return "[Gemini 503 Fallback Mode] " + data['choices'][0]['message']['content'].replace("\n", "<br>")
+        except Exception:
+            pass
+
+    return "Error generating analysis from Gemini. Google servers are currently at maximum capacity."
 
 def draw_south_chart(name: str, lagna_sign: str, planets_map: dict):
     south_chart = jc.SouthChart("D1 Natal Chart", name, IsFullChart=False)
