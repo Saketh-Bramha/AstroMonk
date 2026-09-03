@@ -59,7 +59,18 @@ def compute_astrology_data(dob: datetime, place: str):
         "planets_map": planets_sign_map
     }
 
-def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = "", dob: datetime = None, place: str = ""):
+def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str, question: str = "", dob: datetime = None, place: str = "", req_type: str = "daily"):
+    
+    type_prompts = {
+        "daily": f"A specific 'Daily Horoscope' for today ({datetime.now().strftime('%Y-%m-%d')}) based on their Moon Sign ({moon_sign}).",
+        "weekly": f"A detailed 'Weekly Forecast' for the upcoming week based on their Moon Sign ({moon_sign}). Focus on career, love, and health.",
+        "monthly": f"A comprehensive 'Monthly Forecast' for the current month based on their Moon Sign ({moon_sign}).",
+        "yearly": f"A broad 'Yearly Destiny Forecast' for the rest of the year based on their Moon Sign ({moon_sign}).",
+        "ask": f"Answering their specific question: '{question}' using astrological insights."
+    }
+    
+    specific_request = type_prompts.get(req_type, type_prompts["daily"])
+
     prompt = f"""
     You are an expert Vedic astrologer. I am providing you with the following exact astronomical birth chart details of {name}.
     - Ascendant (Lagna): {lagna}
@@ -67,13 +78,11 @@ def generate_moon_analysis(name: str, moon_sign: str, nakshatra: str, lagna: str
     - Moon Nakshatra: {nakshatra}
     - Date of Birth: {dob.strftime('%Y-%m-%d') if dob else "N/A"}
     - Place of Birth: {place}
-    - Seeker's Question: {question if question else "General life guidance and cosmic path."}
     
     Please provide:
     1. A profound, mystical, yet highly accurate analysis of their personality and destiny based on their Lagna, Moon Sign, and Nakshatra.
-    2. Answering their specific question using astrological insights.
-    3. A specific 'Daily Horoscope' for today ({datetime.now().strftime('%Y-%m-%d')}) based on their Moon Sign ({moon_sign}).
-    4. Keep it well-formatted with HTML bold tags (e.g. <b>text</b>) and <br> tags for spacing. Do not use markdown (**, ##).
+    2. {specific_request}
+    3. Keep it well-formatted with HTML bold tags (e.g. <b>text</b>) and <br> tags for spacing. Do not use markdown (**, ##).
     """
     
     # Using REST API
@@ -150,6 +159,7 @@ def predict():
         time_str = data.get('time')
         place = data.get('place')
         question = data.get('question')
+        req_type = data.get('type', 'daily') # daily, weekly, monthly, yearly, ask
 
         # Parse datetime
         year, month, day = map(int, dob_str.split('-'))
@@ -159,7 +169,7 @@ def predict():
         astro = compute_astrology_data(dob, place)
         
         analysis = generate_moon_analysis(
-            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], question, dob, place
+            name, astro["moon_sign"], astro["nakshatra"], astro["lagna"], question, dob, place, req_type
         )
 
         return jsonify({
