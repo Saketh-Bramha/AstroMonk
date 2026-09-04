@@ -19,6 +19,8 @@ export default function Feature() {
   const titles = {
     daily: 'Daily Horoscope',
     weekly: 'Weekly Forecast',
+    monthly: 'Monthly Forecast',
+    yearly: 'Yearly Destiny Forecast',
     chart: 'Birth Chart (Kundli)',
     ask: 'Cosmic Oracle'
   };
